@@ -1,5 +1,16 @@
+require('dotenv').config()
+
+//connecting with supabase
+const { createClient } = require('@supabase/supabase-js')
+
+//creating supabase client instance
+const supabase=createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY)
+console.log('success') //print success in case of sucessfull connection b/w node js and supabase
+
+//initialise express
 const express=require('express')
 const app=express()
+
 //importing multer to upload files
 const multer=require("multer")
 
@@ -10,7 +21,8 @@ const storage=multer.memoryStorage()
 
 //a middleware that will intercept the request and make the uploaded file available as req.file
 const upload=multer({storage:storage})
-const PORT= 5000
+
+const PORT=process.env.port || 5000
 
 //defining a post route at upload
 app.post('/upload', upload.single('file'),async(req,res)=>{

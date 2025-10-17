@@ -114,8 +114,25 @@ app.get('/download/:fileID' , async(req,res)=>{
     if(findError){
         return res.status(404).json({error: "File not found"})
     }else{
-        res.redirect(findData.file_link)
+        //expiry time calculation
+        const now=new Date().getTime()
+        const expiry=new Date(findData.expiry_time).getTime()
+        const remainingTime=expiry-now
+        if(remainingTime<0){
+            res.status(200).json({
+                publicURL: findData.file_link,
+                expiresAfter: "expired already"
+            })
+        }else{
+            const hours=Math.floor(remainingTime/(1000*60*60))
+            const minutes=Math.floor(remainingTime%(1000*60*60)/(60*1000))
+            const seconds=Math.floor(remainingTime%(1000*60)/1000)
+            res.status(200).json({
+                publicURL: findData.file_link,
+                expiresAfter: `${hours}hours and ${minutes}minutes and ${seconds}seconds`
+            })
             
+        }   
     }
        
     }

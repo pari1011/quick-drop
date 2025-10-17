@@ -29,9 +29,24 @@ app.post('/upload', upload.single('file'),async(req,res)=>{
    
     const file=req.file //req.file contains details about the file name,size,etc.
     console.log(file)
+    
+
     if(!file){
         return res.status(400).json({error: "No file uploaded"}) //incase no file is uploaded
 
+    }
+    //unique file name incase multiple files have similar names
+    const fileName=`${Date.now()}-${file.originalname}`
+
+    //uploading file to supabase storage
+    const {data, error}=await 
+    supabase.storage
+    .from("uploads") //bucket-name
+    .upload(fileName,file.buffer, {contentType: file.mimetype})//file.buffer contains file data in binary format
+    
+    
+    if(data){
+        console.log("file upload to supabase: success")
     }
     res.status(200).json({
         message: "file uploaded successfully",

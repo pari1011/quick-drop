@@ -7,6 +7,9 @@ const { createClient } = require('@supabase/supabase-js')
 const supabase=createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY)
 console.log('success') //print success in case of sucessfull connection b/w node js and supabase
 
+//importing nanoid for generating unique file ids
+const {nanoid}=require('nanoid')
+
 //initialise express
 const express=require('express')
 const app=express()
@@ -59,6 +62,12 @@ app.post('/upload', upload.single('file'),async(req,res)=>{
      
 
     }
+
+    //after uploading file to supabase 
+    //generate random 10character id to generate unique non guessable link for each uploaded file
+    const fileID=nanoid(10) 
+
+    
     res.status(200).json({
         message: "file uploaded successfully",
         link: global.link

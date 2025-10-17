@@ -46,10 +46,20 @@ app.post('/upload', upload.single('file'),async(req,res)=>{
     
     
     if(data){
-        console.log("file upload to supabase: success")
+         console.log("file upload to supabase: success")
+        //retrieving the public url in case of successful upload
+         const {data: publicData}= //public data is object too that contains a key public url
+         supabase.storage
+         .from("uploads")
+         .getPublicUrl(fileName)
+          global.link=publicData.publicUrl
+         
+     
+
     }
     res.status(200).json({
         message: "file uploaded successfully",
+        link: global.link
     })
     
     

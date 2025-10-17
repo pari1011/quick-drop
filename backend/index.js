@@ -1,4 +1,5 @@
 require('dotenv').config()
+const cron=require("node-cron")
 
 //connecting with supabase
 const { createClient } = require('@supabase/supabase-js')
@@ -117,7 +118,7 @@ app.get('/download/:fileID' , async(req,res)=>{
         //expiry time calculation
         const now=new Date().getTime()
         const expiry=new Date(findData.expiry_time).getTime()
-        const remainingTime=expiry-now
+        const remainingTime=expiry-now 
         if(remainingTime<0){
             res.status(200).json({
                 publicURL: findData.file_link,
@@ -138,7 +139,65 @@ app.get('/download/:fileID' , async(req,res)=>{
     }
 )
 
+//function for deleting expired files
+const deleteExpiredFiles=async()=>{
+    const now=new Date().toISOString()
 
+    //fetch all expired files from databse
+    const{data:dataExpiredFiles, error:errorExpiredFiles}= await supabase
+         .from('files')
+         .select("*")
+         .lte("expiry_time", now) //less than or equal to
+
+    if(errorExpiredFiles) {
+         console.log("error in fetching expired files")
+    }else{
+         console.log(dataExpiredFiles)//an array containing each record as objects
+
+         //loop through and delete each file
+         for(const expiredFile of dataExpiredFiles){
+            try{
+            //delete from storage
+            const filePath = expiredFile.file_link.split('/').pop();
+            console.log(filePath)
+            const {error: storageError}=await supabase.storage
+              .from('uploads')
+              .remove([filePath])
+
+
+            if(storageError){
+                throw storageError
+                continue; //skip database deletion if storage deletetion fails
+            }
+
+            //delete from database
+            const {error:dbError}=await supabase
+             .from('files')
+             .delete()
+             .eq("file_ID", expiredFile.file_ID )
+             if(dbError){
+               throw dbError
+             }
+            
+
+
+            }catch(err){
+                console.error(`Failed to delete this file ${expiredFile.file_Name}`, err)
+            }
+
+        
+        }
+
+    }
+
+}
+
+//implementing node-cron for periodic check of expired files and delete them automatically
+cron.schedule("*/5 * * * *", async()=>{
+    console.log("periodic check started...")
+    await deleteExpiredFiles()
+    console.log("completed successfully")
+})
 
 
 

@@ -35,8 +35,11 @@ app.post('/upload', upload.single('file'),async(req,res)=>{
         return res.status(400).json({error: "No file uploaded"}) //incase no file is uploaded
 
     }
+
     //unique file name incase multiple files have similar names
-    const fileName=`${Date.now()}-${file.originalname}`
+    //used replace function here to fix the bug for files having special characters except underscores and dots maybe pdfs
+    const fileName=`${Date.now()}-${file.originalname.replace(/[^w.]+/g,"_")}` 
+
 
     //uploading file to supabase storage
     const {data, error}=await 
@@ -44,10 +47,9 @@ app.post('/upload', upload.single('file'),async(req,res)=>{
     .from("uploads") //bucket-name
     .upload(fileName,file.buffer, {contentType: file.mimetype})//file.buffer contains file data in binary format
     
-    
+    //retrieving the public url in case of successful upload
     if(data){
          console.log("file upload to supabase: success")
-        //retrieving the public url in case of successful upload
          const {data: publicData}= //public data is object too that contains a key public url
          supabase.storage
          .from("uploads")

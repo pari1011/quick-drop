@@ -45,19 +45,19 @@ app.post('/upload', upload.single('file'),async(req,res)=>{
 
 
     //uploading file to supabase storage
-    const {data, error}=await 
+    const {data:uploadData, error:uploadError}=await 
     supabase.storage
     .from("uploads") //bucket-name
     .upload(fileName,file.buffer, {contentType: file.mimetype})//file.buffer contains file data in binary format
     
     //retrieving the public url in case of successful upload
-    if(data){
+    if(uploadData){
          console.log("file upload to supabase: success")
          const {data: publicData}= //public data is object too that contains a key public url
          supabase.storage
          .from("uploads")
          .getPublicUrl(fileName)
-          global.link=publicData.publicUrl
+          global.fileLink=publicData.publicUrl
          
      
 
@@ -66,11 +66,35 @@ app.post('/upload', upload.single('file'),async(req,res)=>{
     //after uploading file to supabase 
     //generate random 10character id to generate unique non guessable link for each uploaded file
     const fileID=nanoid(10) 
+     
+    //extracting expiry time from request
+    const expiryTime=Number(req.body.expiry_time) //by default string
 
-    
+    //inserting the unique id, publicURL into table files
+    const { data:insertData, error:insertError } = await supabase
+   .from("files")
+   .insert([
+    {
+      file_ID: fileID,
+      file_Name: fileName,
+      file_link: global.fileLink,
+      expiry_time: new Date(Date.now() + expiryTime * 60 * 1000).toISOString(),
+      
+    },
+  ])
+  .select();
+
+    if(insertError){
+        console.log("error inserting data", error)
+
+    }else{
+        console.log("successfully inserted data ")
+    }
+
+
     res.status(200).json({
         message: "file uploaded successfully",
-        link: global.link
+        link: `http://localhost:5000/upload/${fileID}`
     })
     
     

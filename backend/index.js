@@ -94,11 +94,35 @@ app.post('/upload', upload.single('file'),async(req,res)=>{
 
     res.status(200).json({
         message: "file uploaded successfully",
-        link: `http://localhost:5000/upload/${fileID}`
+        link: `http://localhost:5000/download/${fileID}`
     })
     
     
 })
+//defining get route at download 
+app.get('/download/:fileID' , async(req,res)=>{
+
+    const fileID=req.params.fileID
+
+   
+    //fetching matching record from supabase table
+    const {data:findData,error:findError}= await supabase
+       .from('files')
+       .select("*")
+       .eq("file_ID", fileID)
+       .single()
+    if(findError){
+        return res.status(404).json({error: "File not found"})
+    }else{
+        res.redirect(findData.file_link)
+            
+    }
+       
+    }
+)
+
+
+
 
 
 

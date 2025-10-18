@@ -64,6 +64,7 @@ app.post('/upload', upload.single('file'),async(req,res)=>{
          .from("uploads")
          .getPublicUrl(fileName)
           global.fileLink=publicData.publicUrl
+          console.log("link generated successfully")
          
      
 
@@ -85,13 +86,14 @@ app.post('/upload', upload.single('file'),async(req,res)=>{
       file_Name: fileName,
       file_link: global.fileLink,
       expiry_time: new Date(Date.now() + expiryTime * 60 * 1000).toISOString(),
+      file_type:file.mimetype.split('/')[1]
       
     },
   ])
   .select();
 
     if(insertError){
-        console.log("error inserting data", error)
+        console.log("error inserting data", insertError)
 
     }else{
         console.log("successfully inserted data ")
@@ -100,7 +102,7 @@ app.post('/upload', upload.single('file'),async(req,res)=>{
 
     res.status(200).json({
         message: "file uploaded successfully",
-        link: `http://localhost:5000/download/${fileID}`
+        link: `http://localhost:5173/download/${fileID}`
     })
     
     
@@ -117,6 +119,10 @@ app.get('/download/:fileID' , async(req,res)=>{
        .select("*")
        .eq("file_ID", fileID)
        .single()
+
+    
+
+
     if(findError){
         return res.status(404).json({error: "File not found"})
     }else{
@@ -127,14 +133,16 @@ app.get('/download/:fileID' , async(req,res)=>{
         if(remainingTime<0){
             res.status(200).json({
                 publicURL: findData.file_link,
+                fileType: findData.file_type,
                 expiresAfter: "expired already"
-            })
+            })   
         }else{
             const hours=Math.floor(remainingTime/(1000*60*60))
             const minutes=Math.floor(remainingTime%(1000*60*60)/(60*1000))
             const seconds=Math.floor(remainingTime%(1000*60)/1000)
             res.status(200).json({
                 publicURL: findData.file_link,
+                fileType: findData.file_type,
                 expiresAfter: `${hours}hours and ${minutes}minutes and ${seconds}seconds`
             })
             
@@ -202,6 +210,7 @@ cron.schedule("*/5 * * * *", async()=>{
     await deleteExpiredFiles()
     console.log("completed successfully")
 })
+
 
 
 

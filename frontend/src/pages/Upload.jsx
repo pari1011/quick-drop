@@ -15,7 +15,7 @@ const Upload = () => {
     }
   }
   //event handler for expiry time
-  const [expiryTime, setexpiryTime] = useState(0);
+  const [expiryTime, setexpiryTime] = useState(5);
   const handleExpiryTime = (e) => {
     const val = e.target.value
     if (val.endsWith("min")) {
@@ -28,6 +28,9 @@ const Upload = () => {
 
              
            
+  
+
+  
   }
   const [message, setmessage] = useState("");
   const [url, seturl] = useState(null);
@@ -44,9 +47,7 @@ const Upload = () => {
      })
     .catch(err => {
     console.error('Upload failed:', err);
-    });
-
-    
+    })
     
   }
   
@@ -65,7 +66,7 @@ const Upload = () => {
   return (
     <div className='bg-[#0B1A33] w-full h-screen flex items-center justify-center'>
       <div className=' bg-gray-700 rounded-3xl text-center p-10 flex flex-col w-150 items-center '>
-        <h1 className='text-4xl bold text-white'> Quick Drop</h1>
+        <h1 className='text-4xl bold text-white'>Quick Drop-Upload</h1>
         <label
          for="file-upload"
          class="mt-8 flex flex-col items-center justify-center w-74 h-32 border-2 border-dashed border-gray-400 rounded-lg cursor-pointer bg-gray-300 hover:bg-gray-400"

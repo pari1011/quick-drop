@@ -1,6 +1,8 @@
 require('dotenv').config()
 const cron=require("node-cron")
 
+const cors=require("cors")
+
 //connecting with supabase
 const { createClient } = require('@supabase/supabase-js')
 
@@ -14,6 +16,9 @@ const {nanoid}=require('nanoid')
 //initialise express
 const express=require('express')
 const app=express()
+
+app.use(cors()); // allows all origins
+app.use(express.json()); // for parsing JSON body
 
 //importing multer to upload files
 const multer=require("multer")
@@ -42,8 +47,8 @@ app.post('/upload', upload.single('file'),async(req,res)=>{
 
     //unique file name incase multiple files have similar names
     //used replace function here to fix the bug for files having special characters except underscores and dots maybe pdfs
-    const fileName=`${Date.now()}-${file.originalname.replace(/[^w.]+/g,"_")}` 
 
+    const fileName=`${Date.now()}-${file.originalname.replace(/[^w.]+/g,"_")}`
 
     //uploading file to supabase storage
     const {data:uploadData, error:uploadError}=await 
@@ -158,8 +163,7 @@ const deleteExpiredFiles=async()=>{
          for(const expiredFile of dataExpiredFiles){
             try{
             //delete from storage
-            const filePath = expiredFile.file_link.split('/').pop();
-            console.log(filePath)
+            const filePath = expiredFile.file_link.split('/uploads/')[1];
             const {error: storageError}=await supabase.storage
               .from('uploads')
               .remove([filePath])
@@ -208,3 +212,4 @@ cron.schedule("*/5 * * * *", async()=>{
 app.listen(PORT,()=>{
     console.log(`server started at port: ${PORT}`)
 })
+

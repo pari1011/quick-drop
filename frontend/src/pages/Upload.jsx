@@ -32,6 +32,16 @@ const Upload = () => {
 
   
   }
+  const [Protection, setProtection] = useState(false);
+  const handleProtection=(e)=>{
+    setProtection(e.target.value)
+  }
+
+  const [password, setpassword] = useState("");
+  const handlePassword=(e)=>{
+    setpassword(e.target.value)
+  }
+  
   const [message, setmessage] = useState("");
   const [url, seturl] = useState(null);
   const handleUpload=()=>{
@@ -39,6 +49,10 @@ const Upload = () => {
     const formData= new FormData()
     formData.append("file", file)
     formData.append("expiry_time", expiryTime)
+    {
+      password && formData.append("password", password)
+    }
+   
     axios.post('http://localhost:5000/upload', formData)
     .then(res => {
     console.log('Upload success:', res.data);
@@ -91,6 +105,27 @@ const Upload = () => {
           <option className='text-white rounded-l bg-gray-500'>24hr</option>
 
         </select>
+        
+        <p className='mt-8 text-gray-300 text-sm'>Would you like to make the file password protected?</p>
+        <div className='flex gap-7 items-center text-xl'>
+           <label className='mt-3 text-gray-300 cursor-pointer' >
+            <input  type="radio" name="protection" value="true" onChange={handleProtection}/>
+            Yes</label>
+          
+        <label className='mt-3 text-gray-300'>
+            <input type="radio" name="protection" value="false" onChange={handleProtection} />
+            No</label>
+      
+
+        </div>
+        {Protection==="true"?
+        (<>
+        <input type="text" placeholder='please enter the password' className='mt-3 focus: outline-none p-1 text-white rounded-l bg-gray-500 w-full text-center' onChange={handlePassword} value={password} />
+         </>)
+        :
+        (<>
+        </>)}
+       
         
         <button className='mt-8 bg-blue-600 text-white rounded-md p-1 w-full cursor-pointer' onClick={handleUpload}>Upload File</button>
         {url?(

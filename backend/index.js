@@ -48,7 +48,7 @@ app.post('/upload', upload.single('file'),async(req,res)=>{
     //unique file name incase multiple files have similar names
     //used replace function here to fix the bug for files having special characters except underscores and dots maybe pdfs
 
-    const fileName=file.originalname
+    const fileName=nanoid(3) + file.originalname
 
     //uploading file to supabase storage
     const {data:uploadData, error:uploadError}=await 
@@ -56,16 +56,21 @@ app.post('/upload', upload.single('file'),async(req,res)=>{
     .from("uploads") //bucket-name
     .upload(fileName,file.buffer, {contentType: file.mimetype})//file.buffer contains file data in binary format
     
+    if (uploadError) {
+      console.error("Error uploading file to Supabase:", uploadError.message);
+      return res.status(500).json({ error: "File upload failed" });
+    }
+
+    console.log("File upload to Supabase: success");
     //retrieving the public url in case of successful upload
-    if(uploadData){
-         console.log("file upload to supabase: success")
-         const {data: publicData}= //public data is object too that contains a key public url
-         await supabase.storage
+   
+    const {data: publicData}= //public data is object too that contains a key public url
+    supabase.storage
          .from("uploads")
          .getPublicUrl(fileName)
-          global.fileLink=publicData.publicUrl
-          console.log("link generated successfully")
-    }
+    const fileLink=publicData.publicUrl
+    console.log("link generated successfully")
+    
 
     //after uploading file to supabase 
     //generate random 10character id to generate unique non guessable link for each uploaded file
@@ -81,10 +86,11 @@ app.post('/upload', upload.single('file'),async(req,res)=>{
     {
       file_ID: fileID,
       file_Name: fileName,
-      file_link: global.fileLink,
+      file_link: fileLink,
       expiry_time: new Date(Date.now() + expiryTime * 60 * 1000).toISOString(),
       file_type:file.mimetype.split('/')[1],
-      file_size:file.size
+      file_size:file.size,
+      password:req.body.password
      
       
     },
@@ -131,10 +137,11 @@ app.get('/download/:fileID' , async(req,res)=>{
         const remainingTime=expiry-now 
         if(remainingTime<0){
             res.status(200).json({
-                fileName: findData.file_Name,
+                fileName: findData.file_Name.slice(3),
                 publicURL: findData.file_link,
                 fileType: findData.file_type,
                 fileSize: findData.file_size,
+                password: findData.password,
                 expiresAfter: "expired already"
             })   
         }else{
@@ -142,10 +149,11 @@ app.get('/download/:fileID' , async(req,res)=>{
             const minutes=Math.floor(remainingTime%(1000*60*60)/(60*1000))
             const seconds=Math.floor(remainingTime%(1000*60)/1000)
             res.status(200).json({
-                fileName: findData.file_Name,
+                fileName: findData.file_Name.slice(3),
                 publicURL: findData.file_link,
                 fileType: findData.file_type,
                 fileSize: findData.file_size,
+                password: findData.password,
                 expiresAfter: `${hours}hours and ${minutes}minutes and ${seconds}seconds`
             })
             

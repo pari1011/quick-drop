@@ -118,8 +118,10 @@ const Download = () => {
      {/* case3: correct password entered */}
      {status=="true" && (
        <>
+        {/* check if the file exits in database or not */}
         {message ? (
           <>
+           {/* expired already case and deleted from database */}
             <div className="bg-[#0B1A33] w-full h-screen flex items-center justify-center p-20">
               <div className="bg-gray-700 rounded-3xl text-center p-10 flex flex-col w-150 items-center gap-8">
                 <h1 className="text-4xl font-bold text-white">Quick Drop-Download</h1>
@@ -129,10 +131,13 @@ const Download = () => {
           </>
         ) : (
           <>
+           {/* else */}
+           {/* checking if pdf then iframe else img */}
             {Type === "pdf" || Type === "mp4" ? (
-              <>
+              <> 
+                {/* checking if expired */}
                 {expiryTimeLeft !== "expired already" ? (
-                  <div className="bg-[#0B1A33] w-full h-screen flex items-center justify-center p-20">
+                  <div className="bg-[#0B1A33] w-full min-h-screen flex items-center justify-center p-20">
                     <div className="bg-gray-700 rounded-3xl text-center p-10 flex flex-col w-150 items-center">
                       <h1 className="text-4xl font-bold text-white">Quick Drop-Download</h1>
                       <p className="text-gray-200 mt-3">File Name:</p>
@@ -204,6 +209,7 @@ const Download = () => {
       </>
     ) : (
       <>
+      {/* incase no password protection */}
         {message ? (
           <>
             <div className="bg-[#0B1A33] w-full h-screen flex items-center justify-center p-20">
@@ -218,7 +224,7 @@ const Download = () => {
             {Type === "pdf" || Type === "mp4" ? (
               <>
                 {expiryTimeLeft !== "expired already" ? (
-                  <div className="bg-[#0B1A33] w-full h-screen flex items-center justify-center p-20">
+                  <div className="bg-[#0B1A33] w-full min-h-screen flex items-center justify-center p-20">
                     <div className="bg-gray-700 rounded-3xl text-center p-10 flex flex-col w-150 items-center">
                       <h1 className="text-4xl font-bold text-white">Quick Drop-Download</h1>
                       <p className="text-gray-200 mt-3">File Name:</p>

@@ -48,7 +48,7 @@ app.post('/upload', upload.single('file'),async(req,res)=>{
     //unique file name incase multiple files have similar names
     //used replace function here to fix the bug for files having special characters except underscores and dots maybe pdfs
 
-    const fileName=`${Date.now()}-${file.originalname.replace(/[^w.]+/g,"_")}`
+    const fileName=file.originalname
 
     //uploading file to supabase storage
     const {data:uploadData, error:uploadError}=await 
@@ -60,14 +60,11 @@ app.post('/upload', upload.single('file'),async(req,res)=>{
     if(uploadData){
          console.log("file upload to supabase: success")
          const {data: publicData}= //public data is object too that contains a key public url
-         supabase.storage
+         await supabase.storage
          .from("uploads")
          .getPublicUrl(fileName)
           global.fileLink=publicData.publicUrl
           console.log("link generated successfully")
-         
-     
-
     }
 
     //after uploading file to supabase 
@@ -86,7 +83,9 @@ app.post('/upload', upload.single('file'),async(req,res)=>{
       file_Name: fileName,
       file_link: global.fileLink,
       expiry_time: new Date(Date.now() + expiryTime * 60 * 1000).toISOString(),
-      file_type:file.mimetype.split('/')[1]
+      file_type:file.mimetype.split('/')[1],
+      file_size:file.size
+     
       
     },
   ])
@@ -132,8 +131,10 @@ app.get('/download/:fileID' , async(req,res)=>{
         const remainingTime=expiry-now 
         if(remainingTime<0){
             res.status(200).json({
+                fileName: findData.file_Name,
                 publicURL: findData.file_link,
                 fileType: findData.file_type,
+                fileSize: findData.file_size,
                 expiresAfter: "expired already"
             })   
         }else{
@@ -141,8 +142,10 @@ app.get('/download/:fileID' , async(req,res)=>{
             const minutes=Math.floor(remainingTime%(1000*60*60)/(60*1000))
             const seconds=Math.floor(remainingTime%(1000*60)/1000)
             res.status(200).json({
+                fileName: findData.file_Name,
                 publicURL: findData.file_link,
                 fileType: findData.file_type,
+                fileSize: findData.file_size,
                 expiresAfter: `${hours}hours and ${minutes}minutes and ${seconds}seconds`
             })
             

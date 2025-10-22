@@ -40,6 +40,18 @@ const Download = () => {
     setinputpsswd(e.target.value)
   }
 
+  const [Visibility, setVisibility] = useState(true); //false-hide true-show
+    const handlePasswordVisibility=()=>{
+      if(Visibility==false){
+        setVisibility(true)
+      }
+      else{
+        setVisibility(false)
+      }
+  
+    }
+
+
   const handleSubmit=()=>{
     if(inputpsswd===password){
       setstatus("true")
@@ -81,7 +93,10 @@ const Download = () => {
                       <div className="bg-gray-700 rounded-3xl text-center p-10 flex flex-col w-150 items-center gap-8">
                         <h1 className="text-4xl font-bold text-white">Quick Drop-Download</h1>
                         <p className="text-gray-400 text-2xl">This file is password protected</p>
-                        <input type="text" placeholder='please enter the password' className='mt-3 focus: outline-none p-1 text-white rounded-l bg-gray-500 w-full text-center' onChange={handleInputPassword} value={inputpsswd} />
+                         <div className='mt-3 p-1 flex items-center w-full justify-around rounded-l bg-gray-500' >
+                           <input type={Visibility? "password" : "text"} placeholder='please enter the password' className='text-white w-full text-center focus:outline-none' onChange={handleInputPassword} value={inputpsswd} />
+                           <button className='text-gray-300 text-sm' onClick={handlePasswordVisibility}>{Visibility? "show" : "hide" }</button>
+                        </div>
                         <button
                         className="bg-blue-600 text-white rounded-md cursor-pointer p-1 mt-5"
                         onClick={handleSubmit}
@@ -101,8 +116,11 @@ const Download = () => {
                     <div className="bg-[#0B1A33] w-full h-screen flex items-center justify-center p-20">
                       <div className="bg-gray-700 rounded-3xl text-center p-10 flex flex-col w-150 items-center gap-8">
                         <h1 className="text-4xl font-bold text-white">Quick Drop-Download</h1>
-                        
-                        <input type="text" placeholder='please enter the correct password' className='mt-3  p-1 border  border-red-600 text-white rounded-l bg-gray-500 w-full text-center' onChange={handleInputPassword} value={inputpsswd} />
+                        <div className='mt-3 p-1 border  border-red-600 flex items-center w-full justify-around rounded-l bg-gray-500' >
+                           <input type={Visibility? "password" : "text"} placeholder='please enter the correct password' className='text-white w-full text-center focus:outline-none' onChange={handleInputPassword} value={inputpsswd} />
+                           <button className='text-gray-300 text-sm' onClick={handlePasswordVisibility}>{Visibility? "show" : "hide" }</button>
+                        </div>
+                       
                         <button
                         className="bg-blue-600 text-white rounded-md cursor-pointer p-1 mt-5"
                         onClick={handleSubmit}

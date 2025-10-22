@@ -41,13 +41,23 @@ const Upload = () => {
   const handlePassword=(e)=>{
     setpassword(e.target.value)
   }
+  const [Visibility, setVisibility] = useState(true); //false-hide true-show
+  const handlePasswordVisibility=()=>{
+    if(Visibility==false){
+      setVisibility(true)
+    }
+    else{
+      setVisibility(false)
+    }
+
+  }
   const [UploadProgress, setUploadProgress] = useState(0);
   const [message, setmessage] = useState("")
   const [url, seturl] = useState(null);
   const handleUpload=()=>{
     if(!file){
       alert('Please select a file')
-    }
+    }else{
     const formData= new FormData()
     formData.append("file", file)
     formData.append("expiry_time", expiryTime)
@@ -74,7 +84,7 @@ const Upload = () => {
                 setmessage(err)
                 
               })
-
+     }
 }
   
   const copyToClipboard=()=>{
@@ -131,9 +141,10 @@ const Upload = () => {
 
         </div>
         {Protection==="true"?
-        (<>
-        <input type="text" placeholder='please enter the password' className='mt-3 focus: outline-none p-1 text-white rounded-l bg-gray-500 w-full text-center' onChange={handlePassword} value={password} />
-         </>)
+        (<div className='flex items-center justify-around w-full bg-gray-500 rounded-l mt-3 p-1'>
+        <input type={Visibility? "password" : "text"} placeholder='please enter the password' className='focus: outline-none  text-white w-full text-center' onChange={handlePassword} value={password} />
+        <button className='focus: outline-none text-gray-300 text-sm' onClick={handlePasswordVisibility}>{Visibility? "Show" : "Hide" }</button>
+        </div>)
         :
         (<>
         </>)}

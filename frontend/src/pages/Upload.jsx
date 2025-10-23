@@ -53,7 +53,8 @@ const Upload = () => {
   }
   const [UploadProgress, setUploadProgress] = useState(0);
   const [message, setmessage] = useState("")
-  const [url, seturl] = useState(null);
+  const [fileID, setfileID] = useState(null);
+   const [url, seturl] = useState(null);
   const handleUpload=()=>{
     if(!file){
       alert('Please select a file')
@@ -76,7 +77,8 @@ const Upload = () => {
           .then(res =>
              { console.log('Upload success:', res.data); 
                setUploadProgress(100)
-               seturl(res.data.link)
+               setfileID(res.data.fileID)
+               seturl(`http://localhost:5173/download/${res.data.fileID}`)
                setUploadProgress(100) 
               }) 
           .catch(err =>
@@ -85,7 +87,11 @@ const Upload = () => {
                 
               })
      }
+    
 }
+ 
+ 
+  
   
   const copyToClipboard=()=>{
     navigator.clipboard.writeText(url)

@@ -107,7 +107,7 @@ app.post('/upload', upload.single('file'),async(req,res)=>{
 
     res.status(200).json({
         message: "file uploaded successfully",
-        link: `http://localhost:5173/download/${fileID}`
+        fileID: fileID
     })
     
     
@@ -232,4 +232,3 @@ cron.schedule("*/5 * * * *", async()=>{
 app.listen(PORT,()=>{
     console.log(`server started at port: ${PORT}`)
 })
-

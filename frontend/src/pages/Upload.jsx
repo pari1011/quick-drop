@@ -66,7 +66,7 @@ const Upload = () => {
       password && formData.append("password", password)
     }
    
-    axios.post("http://localhost:5000/upload", 
+    axios.post("https://quick-drop-1.onrender.com/upload", 
       formData, 
       { onUploadProgress: (progressEvent) =>
          { const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total)
@@ -78,7 +78,7 @@ const Upload = () => {
              { console.log('Upload success:', res.data); 
                setUploadProgress(100)
                setfileID(res.data.fileID)
-               seturl(`http://localhost:5173/download/${res.data.fileID}`)
+               seturl(`${window.location.origin}/download/${res.data.fileID}`)
                setUploadProgress(100) 
               }) 
           .catch(err =>

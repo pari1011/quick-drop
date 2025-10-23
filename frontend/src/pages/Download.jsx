@@ -18,7 +18,7 @@ const Download = () => {
   const [status, setstatus] = useState(null); //to check if passwrod is correct or not
   const {id}=useParams()  //getting id from the url
   useEffect(()=>{
-    axios.get(`http://localhost:5000/download/${id}`)
+    axios.get(`https://quick-drop-1.onrender.com/download/${id}`)
     .then(res=>{
         console.log(res)
         setname(res.data.fileName)

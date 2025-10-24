@@ -3,10 +3,10 @@
 A minimal and fast web application that allows users to **upload files and share them through temporary links**.  
 Each file automatically expires after a chosen time, ensuring privacy and storage efficiency.  
 
-Built with **React + Node.js + Supabase Storage**, featuring:
--  Password-protected downloads  
--  Real-time upload progress bar  
--  Auto-expiring links  
+## Live Demo
+
+- **Frontend:** [https://comfy-florentine-565281.netlify.app/](#)  
+- **Backend (API):** [https://quick-drop-1.onrender.com](#)
 
 ---
 
@@ -26,16 +26,19 @@ Built with **React + Node.js + Supabase Storage**, featuring:
 - A background **cron job** deletes expired files periodically.  
 
 ---
-
 ## Tech Stack
 
-| Layer | Technology |
-|-------|-------------|
-| Frontend | React / Next.js |
-| Backend | Node.js + Express |
-| Storage | Supabase Storage |
-| Database | Supabase / MongoDB |
-| Deployment | Netlify (Frontend) + Render / Railway (Backend) |
+**Frontend:**  
+- React.js  
+- Axios  
+- Tailwind CSS  
+
+**Backend:**  
+- Node.js  
+- Express.js  
+- Supabase (for storage & database)  
+- NanoID (for unique link generation)  
+- Node-cron (for auto deletion of expired files)  
 
 ---
 
@@ -50,4 +53,9 @@ Built with **React + Node.js + Supabase Storage**, featuring:
   - Prompts for password if protected.
 
 ---
+
+## Video Demonstration
+
+ Watch the full walkthrough here: [Click to View](https://drive.google.com/file/d/1vdUAXOn5xtQeoJIc9Nqd5oxg1zP_ykaP/view?usp=drivesdk)
+
 

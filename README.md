@@ -5,8 +5,9 @@ Each file automatically expires after a chosen time, ensuring privacy and storag
 
 ## Live Demo
 
-- **Frontend:** [https://comfy-florentine-565281.netlify.app/](#)  
-- **Backend (API):** [https://quick-drop-1.onrender.com](#)
+-  **Frontend:** [https://comfy-florentine-565281.netlify.app](https://comfy-florentine-565281.netlify.app)
+- **Backend (API):** [https://quick-drop-1.onrender.com](https://quick-drop-1.onrender.com)
+
 
 ---
 

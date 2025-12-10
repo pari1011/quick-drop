@@ -1,4 +1,4 @@
-##Quick Drop – Secure Temporary File Sharing App
+## Quick Drop – Secure Temporary File Sharing App
 
 A minimal and fast web application that allows users to **upload files and share them through temporary links**.  
 Each file automatically expires after a chosen time, ensuring privacy and storage efficiency.  
